@@ -8,6 +8,8 @@ import math
 import argparse
 from datetime import date
 
+#codespace test
+
 pydirectinput.PAUSE = 0.05
 newStates = {
     "status": "inCity",
