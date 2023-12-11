@@ -9,6 +9,10 @@ To-Do:
 [] Auto Dismantle Sorting
 [] Resurrecting with Phoenix Plumes
 
+12/10/2023
+* Automated Mokoko Night Market Daily and Bleak Night Fog
+* Support for >9 characters
+
 
 A Lost Ark chaos dungeon(PvE) farming bot.\
 Fully automatic mob/elite/boss detecting and clearing, based on image recognition.\
