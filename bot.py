@@ -1175,6 +1175,7 @@ def printResult():
 
 
 def useAbilities():
+    towerCheckCount = 0
     while True:
         diedCheck()
         healthCheck()
@@ -1369,13 +1370,25 @@ def useAbilities():
                 pydirectinput.press(config["awakening"])
                 # pydirectinput.press(config["meleeAttack"])
             elif states["status"] == "floor3" and checkFloor3Tower():
-                if not checkFloor2Elite() and not checkFloor2Mob():
+                # Needs work maybe implement a checkFloor3Tower timeout then do              
+                print("tower check count: {}".format(towerCheckCount))
+                if not checkFloor2Elite() and not checkFloor2Mob() and towerCheckCount < 30:
                     randomMove()
+                    checkFloor3Tower()  
+                    calculateMinimapRelative(states["moveToX"], states["moveToY"])
+                    moveToMinimapRelative(
+                        states["moveToX"], states["moveToY"], 1200, 1300, True
+                    )
+                elif not checkFloor2Elite() and not checkFloor2Mob() and towerCheckCount > 30:
                     checkFloor3Tower()
-                calculateMinimapRelative(states["moveToX"], states["moveToY"])
-                moveToMinimapRelative(
-                    states["moveToX"], states["moveToY"], 1200, 1300, True
-                )
+                    calculateMinimapRelative(states["moveToX"], states["moveToY"])
+                    moveToMinimapRelative(
+                        -states["moveToX"], -states["moveToY"], 1200, 1300, True
+                    )
+                    randomMove()
+                    towerCheckCount = 0
+                    print("resetting position and tower check count")
+
                 # if (
                 #     config["characters"][states["currentCharacter"]]["class"]
                 #     == "sorceress"
@@ -1383,6 +1396,7 @@ def useAbilities():
                 #     pyautogui.press("x")
                 sleep(200, 220)
                 clickTower()
+                towerCheckCount += 1
             elif states["status"] == "floor3" and checkFloor2Mob():
                 calculateMinimapRelative(states["moveToX"], states["moveToY"])
                 moveToMinimapRelative(
@@ -1767,7 +1781,6 @@ def checkFloor2Elite():
             )
             return True
     return False
-
 
 def checkFloor2Mob():
     minimap = pyautogui.screenshot(region=config["regions"]["minimap"])  # Top Right
@@ -2648,6 +2661,17 @@ def checkTimeout():
         states["timeoutCount"] = states["timeoutCount"] + 1
         return True
     return False
+
+# Adding a time limit on checking for floor3 tower and initiating random movev2 if so
+def checkTowerTimeout():
+    currentTime = int(time.time_ns() / 1000000)
+    if (
+        states["multiCharacterMode"] == True
+        and states["floor3Mode"] == True
+        and currentTime - states["instanceStartTime"] > config["towerTimeLimit"]
+    ):
+        print("character is stuck unable to find tower, initiating character reset")
+        return True
 
 
 def gameCrashCheck():
