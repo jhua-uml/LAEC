@@ -937,6 +937,8 @@ def doFloor3Portal():
     if checkTimeout():
         return
 
+def goFishing():
+    bifrostAvailable = 1
 
 def doFloor3():
     waitForLoading()
